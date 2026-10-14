@@ -1,0 +1,78 @@
+name: Android checks and test APK
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      build_apk:
+        description: Build a standalone ARM64 test APK
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    name: TypeScript, lint and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test -- --runInBand
+      - run: npx expo export --platform android
+  apk:
+    name: Standalone Android test APK (ARM64)
+    needs: checks
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.build_apk)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CI: '1'
+      NODE_ENV: production
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+      - run: npm ci --include=dev
+      - name: Generate Android project
+        run: npx expo prebuild --platform android --no-install
+      - name: Build APK with bundled JavaScript
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease --no-daemon --max-workers=2 -PreactNativeArchitectures=arm64-v8a -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
+      - name: Upload installable test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: business-empire-nextgen-arm64-${{ github.run_number }}
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 7
+      - name: Download instructions
+        run: |
+          echo '### Android test APK' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Download the APK artifact below and unzip it. It runs without Metro or Expo Go on ARM64 Android devices.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'This build uses the generated debug signing key for testing. Configure your own release key before publishing to Google Play.' >> "$GITHUB_STEP_SUMMARY"
