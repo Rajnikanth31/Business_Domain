@@ -23,4 +23,5 @@ Completed: dark charcoal/green and light/blue appearances; saved theme preferenc
 
 Added playable feature subsets: seeded fictional stocks and crypto with fees, positions, average cost, realized/unrealized gains and price charts; five rental properties and four luxury items with maintenance and resale. Existing version-1 snapshots remain valid; new fields are optional and validated. Advanced industries, staff, loans, missions and mergers still remain future work; the complete RichMan feature set is not claimed.
 
-Validation: TypeScript, lint, 38 tests in six suites and Android bundle export passed. Android 1.1.0 / version code 2 preserves the same package and database for upgrades. Cloud APK build and native device QA are pending.
+Validation: TypeScript, lint, 38 tests in six suites and Android bundle export passed. Android 1.1.0 / version code 2 preserves the same package and database for upgrades. Cloud APK build succeeded in run 38592733694; artifact 11908163902 contains app-release.apk. Native device QA is still pending.
+

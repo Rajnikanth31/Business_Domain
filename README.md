@@ -32,7 +32,7 @@ npx eas-cli build --platform android --profile preview
 npx eas-cli build --platform android --profile production
 ```
 
-Preview produces an APK; production produces an AAB. Signing is configured with EAS during setup. No APK/AAB has been generated or signing verified here. Package ID: `com.nextgen.businessempire` (change to your owned namespace before release). Cloud build requires your account and network access.
+Preview produces an APK; production produces an AAB. Signing is configured with EAS during setup. The Android 1.1.0 test APK has been built successfully in GitHub Actions. Production AAB and store signing remain unverified. Package ID: `com.nextgen.businessempire` (change to your owned namespace before release). Cloud build requires your account and network access.
 
 ## Device acceptance checklist
 
@@ -56,4 +56,7 @@ This is not the complete production game. Advanced markets, banking, employees, 
 Pushes to main run checks and build a standalone ARM64 Android test APK; pull requests run checks only. You can also open Actions > Android checks and test APK > Run workflow; turn off build_apk to run only the checks. Builds use standard Ubuntu runners with 10/45-minute job timeouts, cancellation of superseded runs and seven-day artifact retention.
 
 Download the business-empire-nextgen-arm64 artifact from a successful run and unzip it. Install the APK on an ARM64 Android phone; Metro and Expo Go are not required. This release-mode test APK uses Expo's generated debug signing key, not a production release identity. Store publication still requires your own signing key and release review. Standard hosted runners are free for public repositories; private repositories use the account's included allowance.
+
+
+Latest verified installer: [Android 1.1.0 test APK artifact](https://github.com/Rajnikanth31/Business_Domain/actions/runs/38592733694/artifacts/11908163902). Both themes are selected in Profile > Appearance. This build supports ARM64 Android devices and preserves the existing package/database.
 
