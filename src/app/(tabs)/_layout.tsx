@@ -1,26 +1,31 @@
 import { Tabs } from "expo-router";
-import { Text } from "react-native";
+import Icon from "../../components/Icon";
+import { useGame } from "../../store/game";
+import { palette } from "../../theme/theme";
 export default function Layout() {
+  const p = palette(useGame((g) => g.game?.theme));
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#101A2A",
-          borderTopColor: "#223047",
+          backgroundColor: p.panel,
+          borderTopColor: p.border,
           height: 72,
           paddingBottom: 12,
         },
-        tabBarActiveTintColor: "#E8C47B",
-        tabBarInactiveTintColor: "#8896AB",
+        tabBarActiveTintColor: p.accent,
+        tabBarInactiveTintColor: p.muted,
+        tabBarLabelStyle: { fontSize: 10 },
       }}
     >
       {[
-        ["index", "Home", "⌂"],
-        ["businesses", "Businesses", "▦"],
-        ["investments", "Investments", "↗"],
-        ["real-estate", "Real Estate", "◇"],
-        ["empire", "Empire", "♛"],
+        ["investments", "Investing", "investing"],
+        ["businesses", "Business", "business"],
+        ["index", "Earnings", "earnings"],
+        ["real-estate", "Items", "items"],
+        ["empire", "Profile", "profile"],
       ].map(([name, title, icon]) => (
         <Tabs.Screen
           key={name}
@@ -28,7 +33,7 @@ export default function Layout() {
           options={{
             title,
             tabBarIcon: ({ color }) => (
-              <Text style={{ fontSize: 24, color }}>{icon}</Text>
+              <Icon name={icon} color={color} size={24} />
             ),
           }}
         />

@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useGame } from "../store/game";
 export default function RootLayout() {
+  const theme = useGame((s) => s.game?.theme);
   useEffect(() => {
     void useGame.getState().boot();
     const timer = setInterval(() => {
@@ -20,7 +21,7 @@ export default function RootLayout() {
   }, []);
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style={theme === "light" ? "dark" : "light"} />
       <Stack
         screenOptions={{
           headerShown: false,

@@ -29,7 +29,7 @@ test("dashboard shows actual cash and dispatches tap", async () => {
       <GameScreen page="home" />
     </SafeAreaProvider>,
   );
-  expect(ui.getByText("¤1,000.00")).toBeTruthy();
-  await fireEvent.press(ui.getByText("Earn ¤10.00"));
+  expect(ui.getByText("$1,000.00")).toBeTruthy();
+  await fireEvent.press(ui.getByLabelText("Tap to earn $10.00"));
   expect(dispatch).toHaveBeenCalledWith({ type: "tap" });
 });

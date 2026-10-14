@@ -1,6 +1,6 @@
 # Business Empire: NextGen
 
-First playable milestone, Android-first Expo SDK 57 application. Starting cash ¤1,000, tap income ¤10, five purchasable beginner businesses, progressive upgrades, revenue/expense accounting, passive and capped offline income, atomic SQLite persistence and five working navigation tabs. Investments and properties are clearly identified future-phase views.
+First playable milestone, Android-first Expo SDK 57 application. Starting cash $1,000, tap income $10, five purchasable beginner businesses, progressive upgrades, revenue/expense accounting, passive and capped offline income, atomic SQLite persistence and five working navigation tabs. The 1.1 redesign adds both light and dark themes, dollar currency, fictional stocks/crypto, property and luxury ownership, and company selling.
 
 ## Launch on Android
 
@@ -21,7 +21,7 @@ npm test -- --runInBand
 npx expo export --platform android
 ```
 
-TypeScript and lint passed. Jest: 22 tests passed in four suites. Save adapter tests use a transactional mock; they do not substitute for native SQLite device QA. Android Hermes bundle export passed. Expo dependency compatibility check passed. Compatible dependency fixes were applied; npm audit still reports 66 advisories (50 high, 16 moderate), including transitive tooling dependencies. No forced major SDK changes were applied. Review audit.json before release. No Android device/emulator was available for native runtime QA.
+TypeScript and lint passed. Jest: 38 tests passed in six suites. Save adapter tests use a transactional mock; they do not substitute for native SQLite device QA. Android Hermes bundle export passed. Expo dependency compatibility check passed. Compatible dependency fixes were applied; npm audit still reports 66 advisories (50 high, 16 moderate), including transitive tooling dependencies. No forced major SDK changes were applied. Review audit.json before release. No Android device/emulator was available for native runtime QA.
 
 ## Android packaging
 
@@ -36,7 +36,7 @@ Preview produces an APK; production produces an AAB. Signing is configured with 
 
 ## Device acceptance checklist
 
-1. Launch: cash ¤1,000 and no assets. Buy Lemonade Stand: cash ¤200, net income ¤1.40/sec, net worth ¤1,000.
+1. Launch: cash $1,000 and no assets. Buy Lemonade Stand: cash $200, net income $1.40/sec, net worth $1,000.
 2. Tap and upgrade; insufficient funds disables the purchase button. Compare next-level revenue and expenses.
 3. Force stop and reopen after a minute: capped elapsed income appears once. Reopen again immediately: no duplicate payout.
 4. Background and foreground the app; inspect income and transaction history.
@@ -47,7 +47,7 @@ Preview produces an APK; production produces an AAB. Signing is configured with 
 
 `src/engine/game.ts` holds pure economic rules; `src/db/save.ts` holds migrations and atomic saves; `src/store/game.ts` coordinates actions; `src/app` holds routes; `src/screens/GameScreen.tsx` provides the dashboard and management screens. `tests` covers finance, persistence boundaries and a UI action. Original geometric artwork is in `assets/images/nextgen-*.png`. `eas.json` and `.github/workflows/checks.yml` provide build profiles and CI. Design, architecture and phase status are in `docs`.
 
-This is not the complete production game. Stocks/crypto, property, banking, employees, economy events, achievements, research, expansion, charts and advanced progression remain later phases. No backend or real-money services. Offline clock and modified saves cannot be fully secured.
+This is not the complete production game. Advanced markets, banking, employees, economy events, achievements, research, expansion and advanced progression remain later phases. No backend or real-money services. Offline clock and modified saves cannot be fully secured.
 
 
 
@@ -56,3 +56,4 @@ This is not the complete production game. Stocks/crypto, property, banking, empl
 Pushes to main run checks and build a standalone ARM64 Android test APK; pull requests run checks only. You can also open Actions > Android checks and test APK > Run workflow; turn off build_apk to run only the checks. Builds use standard Ubuntu runners with 10/45-minute job timeouts, cancellation of superseded runs and seven-day artifact retention.
 
 Download the business-empire-nextgen-arm64 artifact from a successful run and unzip it. Install the APK on an ARM64 Android phone; Metro and Expo Go are not required. This release-mode test APK uses Expo's generated debug signing key, not a production release identity. Store publication still requires your own signing key and release review. Standard hosted runners are free for public repositories; private repositories use the account's included allowance.
+

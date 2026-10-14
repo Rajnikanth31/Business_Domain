@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Action, Game, act, settle } from "../engine/game";
+import { Action, Game, act, settle, money } from "../engine/game";
 import { load, save } from "../db/save";
 type Store = {
   game: Game | null;
@@ -12,7 +12,7 @@ type Store = {
 };
 function summary(result: ReturnType<typeof settle>) {
   if (result.seconds >= 10)
-    return `${result.seconds}s away • ${result.amount >= 0 ? "earned" : "spent"} ¤${(Math.abs(result.amount) / 100).toFixed(2)}${result.anomaly ? " • 8-hour cap applied" : ""}`;
+    return `${result.seconds}s away • ${result.amount >= 0 ? "earned" : "spent"} ${money(Math.abs(result.amount))}${result.anomaly ? " • 8-hour cap applied" : ""}`;
   return result.anomaly
     ? "Clock moved backwards. Earnings paused until it catches up."
     : null;

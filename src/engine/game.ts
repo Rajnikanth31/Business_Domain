@@ -41,6 +41,131 @@ export const BUSINESSES = [
     icon: "◇",
   },
 ] as const;
+export const MARKETS = [
+  {
+    name: "Northstar Tech",
+    symbol: "NST",
+    kind: "Stock",
+    base: 1400,
+    spread: 4000,
+  },
+  {
+    name: "Meridian Energy",
+    symbol: "MRD",
+    kind: "Stock",
+    base: 3200,
+    spread: 3000,
+  },
+  {
+    name: "Atlas Logistics",
+    symbol: "ATL",
+    kind: "Stock",
+    base: 8700,
+    spread: 4000,
+  },
+  {
+    name: "Nova Coin",
+    symbol: "NOVA",
+    kind: "Crypto",
+    base: 6500,
+    spread: 9000,
+  },
+  {
+    name: "Orbit Token",
+    symbol: "ORBT",
+    kind: "Crypto",
+    base: 2500,
+    spread: 8000,
+  },
+] as const;
+export const ITEMS = [
+  {
+    name: "Harbor studio",
+    kind: "Real estate",
+    cost: 85000,
+    rent: 30,
+    expense: 6,
+    location: "Harbor City",
+  },
+  {
+    name: "Garden house",
+    kind: "Real estate",
+    cost: 450000,
+    rent: 125,
+    expense: 30,
+    location: "Greenfield",
+  },
+  {
+    name: "Skyline apartment",
+    kind: "Real estate",
+    cost: 1200000,
+    rent: 380,
+    expense: 90,
+    location: "Metro Bay",
+  },
+  {
+    name: "Seaside villa",
+    kind: "Real estate",
+    cost: 4200000,
+    rent: 1300,
+    expense: 400,
+    location: "Azure Coast",
+  },
+  {
+    name: "City office tower",
+    kind: "Real estate",
+    cost: 15000000,
+    rent: 5800,
+    expense: 1900,
+    location: "Metro Bay",
+  },
+  {
+    name: "Summit GT",
+    kind: "Cars",
+    cost: 1800000,
+    rent: 0,
+    expense: 20,
+    location: "Garage",
+  },
+  {
+    name: "Apex V12",
+    kind: "Cars",
+    cost: 7500000,
+    rent: 0,
+    expense: 70,
+    location: "Garage",
+  },
+  {
+    name: "Horizon yacht",
+    kind: "Yachts",
+    cost: 28000000,
+    rent: 0,
+    expense: 200,
+    location: "Marina",
+  },
+  {
+    name: "Cloudline jet",
+    kind: "Aircraft",
+    cost: 90000000,
+    rent: 0,
+    expense: 800,
+    location: "Private hangar",
+  },
+] as const;
+export function marketPrice(index: number, time: number, seed = 1729) {
+  const asset = MARKETS[index];
+  if (!asset || !Number.isSafeInteger(time) || time < 0)
+    throw new Error("Invalid market.");
+  let n =
+    (Math.floor(time / 300000) ^ Math.imul(index + 1, 2654435761) ^ seed) >>> 0;
+  n ^= n << 13;
+  n ^= n >>> 17;
+  n ^= n << 5;
+  return Math.floor(
+    (asset.base * (10000 + ((n >>> 0) % asset.spread) - asset.spread / 2)) /
+      10000,
+  );
+}
 export type Transaction = {
   id: number;
   label: string;
@@ -58,11 +183,20 @@ export type Game = {
   sequence: number;
   transactions: Transaction[];
   earned: number;
+  theme?: "dark" | "light";
+  holdings?: { quantity: number; cost: number }[];
+  items?: number[];
+  realized?: number;
+  marketSeed?: number;
 };
 export type Action =
   | { type: "tap" }
   | { type: "buy" | "upgrade"; index: number }
-  | { type: "tapUpgrade" };
+  | { type: "tapUpgrade" }
+  | { type: "theme"; value: "dark" | "light" }
+  | { type: "sellBusiness"; index: number }
+  | { type: "buyItem" | "sellItem"; index: number }
+  | { type: "trade"; index: number; side: "buy" | "sell"; quantity: number };
 export function initialGame(now: number): Game {
   return {
     version: 1,
@@ -113,6 +247,34 @@ export function validate(g: Game): Game {
       typeof t.label !== "string"
     )
       throw new Error("Invalid transaction record.");
+  if (g.theme !== undefined && g.theme !== "dark" && g.theme !== "light")
+    throw new Error("Invalid theme.");
+  if (
+    g.holdings !== undefined &&
+    (!Array.isArray(g.holdings) ||
+      g.holdings.length !== MARKETS.length ||
+      g.holdings.some(
+        (h) =>
+          !h ||
+          !Number.isSafeInteger(h.quantity) ||
+          h.quantity < 0 ||
+          !Number.isSafeInteger(h.cost) ||
+          h.cost < 0 ||
+          (h.quantity === 0 && h.cost !== 0),
+      ))
+  )
+    throw new Error("Invalid portfolio.");
+  if (
+    g.items !== undefined &&
+    (!Array.isArray(g.items) ||
+      g.items.length !== ITEMS.length ||
+      g.items.some((v) => v !== 0 && v !== 1))
+  )
+    throw new Error("Invalid items.");
+  if (g.realized !== undefined && !Number.isSafeInteger(g.realized))
+    throw new Error("Invalid realized gains.");
+  if (g.marketSeed !== undefined && !Number.isSafeInteger(g.marketSeed))
+    throw new Error("Invalid market seed.");
   return g;
 }
 export function metrics(g: Game) {
@@ -127,12 +289,37 @@ export function metrics(g: Game) {
       assets += b.cost + b.cost * (l - 1);
     }
   });
+  let portfolio = 0,
+    properties = 0,
+    luxuries = 0,
+    rent = 0,
+    maintenance = 0;
+  MARKETS.forEach((_, i) => {
+    portfolio = integer(
+      portfolio +
+        (g.holdings?.[i].quantity ?? 0) *
+          marketPrice(i, g.lastSettlement, g.marketSeed),
+    );
+  });
+  ITEMS.forEach((a, i) => {
+    if (g.items?.[i]) {
+      if (a.kind === "Real estate") properties += a.cost;
+      else luxuries += a.cost;
+      rent += a.rent;
+      maintenance += a.expense;
+    }
+  });
   return {
     revenue: integer(revenue),
     expenses: integer(expenses),
-    profit: integer(revenue - expenses),
+    profit: integer(revenue - expenses + rent - maintenance),
     assets: integer(assets),
-    netWorth: integer(g.cash + assets),
+    portfolio: integer(portfolio),
+    properties: integer(properties),
+    luxuries: integer(luxuries),
+    rent: integer(rent),
+    maintenance: integer(maintenance),
+    netWorth: integer(g.cash + assets + portfolio + properties + luxuries),
   };
 }
 export function upgradeCost(index: number, level: number) {
@@ -186,6 +373,87 @@ export function settle(
 }
 export function act(g: Game, action: Action, now: number): Game {
   let next = settle(g, now).game;
+  if (action.type === "theme") {
+    if (action.value !== "dark" && action.value !== "light")
+      throw new Error("Invalid theme.");
+    return { ...next, theme: action.value };
+  }
+  if (action.type === "trade") {
+    const a = MARKETS[action.index];
+    if (
+      !a ||
+      !Number.isSafeInteger(action.quantity) ||
+      action.quantity <= 0 ||
+      (action.side !== "buy" && action.side !== "sell")
+    )
+      throw new Error("Invalid order.");
+    const holdings = (
+      next.holdings ?? MARKETS.map(() => ({ quantity: 0, cost: 0 }))
+    ).map((h) => ({ ...h }));
+    const h = holdings[action.index],
+      value = integer(
+        marketPrice(action.index, next.lastSettlement, next.marketSeed) *
+          action.quantity,
+      ),
+      fee = Math.ceil(value / 100);
+    if (action.side === "buy") {
+      const total = integer(value + fee);
+      if (next.cash < total) throw new Error("Not enough cash.");
+      h.quantity = integer(h.quantity + action.quantity);
+      h.cost = integer(h.cost + total);
+      return record(
+        { ...next, holdings, marketSeed: next.marketSeed ?? 1729 },
+        `Bought ${action.quantity} ${a.symbol}`,
+        -total,
+        now,
+      );
+    }
+    if (h.quantity < action.quantity) throw new Error("Not enough shares.");
+    const basis =
+      action.quantity === h.quantity
+        ? h.cost
+        : Math.floor(integer(h.cost * action.quantity) / h.quantity);
+    h.quantity -= action.quantity;
+    h.cost -= basis;
+    return record(
+      {
+        ...next,
+        holdings,
+        realized: integer((next.realized ?? 0) + value - fee - basis),
+      },
+      `Sold ${action.quantity} ${a.symbol}`,
+      value - fee,
+      now,
+    );
+  }
+  if (action.type === "buyItem" || action.type === "sellItem") {
+    const a = ITEMS[action.index];
+    if (!a) throw new Error("Invalid item.");
+    const items = [...(next.items ?? ITEMS.map(() => 0))];
+    if (action.type === "buyItem") {
+      if (items[action.index]) throw new Error("Already owned.");
+      if (next.cash < a.cost) throw new Error("Not enough cash.");
+      items[action.index] = 1;
+      return record({ ...next, items }, `Purchased ${a.name}`, -a.cost, now);
+    }
+    if (!items[action.index]) throw new Error("Item not owned.");
+    items[action.index] = 0;
+    return record(
+      { ...next, items },
+      `Sold ${a.name}`,
+      Math.floor((a.cost * 9) / 10),
+      now,
+    );
+  }
+  if (action.type === "sellBusiness") {
+    const b = BUSINESSES[action.index];
+    if (!b || !next.levels[action.index])
+      throw new Error("Business not owned.");
+    const value = integer(b.cost * next.levels[action.index]),
+      levels = [...next.levels];
+    levels[action.index] = 0;
+    return record({ ...next, levels }, `Sold ${b.name}`, value, now);
+  }
   if (action.type === "tap")
     return record(
       { ...next, taps: next.taps + 1 },
@@ -222,4 +490,6 @@ export function act(g: Game, action: Action, now: number): Game {
   );
 }
 export const money = (cents: number) =>
-  `¤${(cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+    cents / 100,
+  );

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Business Empire: NextGen",
     "slug": "business-empire-nextgen",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/nextgen-icon.png",
     "scheme": "businessdomain",
@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/nextgen-adaptive.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.nextgen.businessempire"
+      "package": "com.nextgen.businessempire",
+      "versionCode": 2
     },
     "web": {
       "output": "static",
