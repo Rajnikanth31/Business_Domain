@@ -1,3 +1,11 @@
+import type { Company } from "../data/catalog";
+import {
+  empireAct,
+  empireMetrics,
+  settleEmpire,
+  validateEmpire,
+} from "./empire";
+import type { EmpireAction } from "./empire";
 export const CAP_SECONDS = 8 * 60 * 60;
 export const BUSINESSES = [
   {
@@ -77,6 +85,68 @@ export const MARKETS = [
     base: 2500,
     spread: 8000,
   },
+  {
+    name: "Bitcoin",
+    symbol: "BTC",
+    kind: "Crypto",
+    base: 4541889,
+    spread: 7000,
+  },
+  {
+    name: "Ethereum",
+    symbol: "ETH",
+    kind: "Crypto",
+    base: 273953,
+    spread: 8000,
+  },
+  { name: "Cardano", symbol: "ADA", kind: "Crypto", base: 49, spread: 8000 },
+  { name: "XRP", symbol: "XRP", kind: "Crypto", base: 43, spread: 8000 },
+  { name: "Solana", symbol: "SOL", kind: "Crypto", base: 3029, spread: 9000 },
+  { name: "Polkadot", symbol: "DOT", kind: "Crypto", base: 1005, spread: 8000 },
+  { name: "Dogecoin", symbol: "DOGE", kind: "Crypto", base: 9, spread: 9000 },
+  {
+    name: "Avalanche",
+    symbol: "AVAX",
+    kind: "Crypto",
+    base: 3265,
+    spread: 9000,
+  },
+  { name: "Litecoin", symbol: "LTC", kind: "Crypto", base: 6154, spread: 8000 },
+  {
+    name: "Arbor Foods",
+    symbol: "ARB",
+    kind: "Stock",
+    base: 3850,
+    spread: 2200,
+  },
+  {
+    name: "Bluehaven Retail",
+    symbol: "BHR",
+    kind: "Stock",
+    base: 12800,
+    spread: 3600,
+  },
+  {
+    name: "Solstice Health",
+    symbol: "SLH",
+    kind: "Stock",
+    base: 6850,
+    spread: 2800,
+  },
+  {
+    name: "Crestline Motors",
+    symbol: "CRM",
+    kind: "Stock",
+    base: 21700,
+    spread: 4400,
+  },
+  {
+    name: "Aster Communications",
+    symbol: "AST",
+    kind: "Stock",
+    base: 5480,
+    spread: 3000,
+  },
 ] as const;
 export const ITEMS = [
   {
@@ -151,6 +221,70 @@ export const ITEMS = [
     expense: 800,
     location: "Private hangar",
   },
+  {
+    name: "Veloce Roadster",
+    kind: "Cars",
+    cost: 12000000,
+    rent: 0,
+    expense: 90,
+    location: "Garage",
+  },
+  {
+    name: "Regent Classic",
+    kind: "Cars",
+    cost: 28000000,
+    rent: 0,
+    expense: 130,
+    location: "Garage",
+  },
+  {
+    name: "Aquila Hypercar",
+    kind: "Cars",
+    cost: 180000000,
+    rent: 0,
+    expense: 300,
+    location: "Garage",
+  },
+  {
+    name: "Ocean Crown",
+    kind: "Yachts",
+    cost: 450000000,
+    rent: 0,
+    expense: 1600,
+    location: "Marina",
+  },
+  {
+    name: "Skylark helicopter",
+    kind: "Aircraft",
+    cost: 120000000,
+    rent: 0,
+    expense: 700,
+    location: "Private hangar",
+  },
+  {
+    name: "Crescent island",
+    kind: "Islands",
+    cost: 2500000000,
+    rent: 0,
+    expense: 3200,
+    location: "Azure Archipelago",
+  },
+  {
+    name: "The Golden Horizon",
+    kind: "Art",
+    cost: 500000000,
+    rent: 0,
+    expense: 15,
+    location: "Private collection",
+  },
+  {
+    name: "Aurora diamond",
+    kind: "Jewelry",
+    cost: 180000000,
+    rent: 0,
+    expense: 5,
+    location: "Private collection",
+  },
 ] as const;
 export function marketPrice(index: number, time: number, seed = 1729) {
   const asset = MARKETS[index];
@@ -173,7 +307,7 @@ export type Transaction = {
   time: number;
 };
 export type Game = {
-  version: 1;
+  version: 1 | 2;
   cash: number;
   levels: number[];
   taps: number;
@@ -188,6 +322,20 @@ export type Game = {
   items?: number[];
   realized?: number;
   marketSeed?: number;
+  companies?: Company[];
+  nextCompanyId?: number;
+  improvements?: number[];
+  dividendsEarned?: number;
+  dividendRemainder?: number;
+  boostUntil?: number;
+  lastBoost?: number;
+  xp?: number;
+  profile?: { name: string; sector: string; avatar: number };
+  legacyTapBase?: number;
+  cardSkin?: "world" | "emerald" | "ocean";
+  haptics?: boolean;
+  milestones?: string[];
+  legacyAssets?: boolean;
 };
 export type Action =
   | { type: "tap" }
@@ -196,7 +344,8 @@ export type Action =
   | { type: "theme"; value: "dark" | "light" }
   | { type: "sellBusiness"; index: number }
   | { type: "buyItem" | "sellItem"; index: number }
-  | { type: "trade"; index: number; side: "buy" | "sell"; quantity: number };
+  | { type: "trade"; index: number; side: "buy" | "sell"; quantity: number }
+  | EmpireAction;
 export function initialGame(now: number): Game {
   return {
     version: 1,
@@ -219,12 +368,12 @@ export function integer(value: number) {
 export function validate(g: Game): Game {
   if (
     !g ||
-    g.version !== 1 ||
+    (g.version !== 1 && g.version !== 2) ||
     !Array.isArray(g.levels) ||
     g.levels.length !== 5 ||
     g.levels.some((x) => !Number.isInteger(x) || x < 0 || x > 50) ||
     !Array.isArray(g.transactions) ||
-    g.transactions.length > 60
+    g.transactions.length > 200
   )
     throw new Error("Invalid save. Your original save has been preserved.");
   for (const key of [
@@ -238,7 +387,8 @@ export function validate(g: Game): Game {
   ] as const)
     if (!Number.isSafeInteger(g[key]) || g[key] < 0)
       throw new Error("Invalid save. Your original save has been preserved.");
-  if (g.remainder >= 1000 || g.tapLevel > 50) throw new Error("Invalid save.");
+  if (g.remainder >= (g.version === 2 ? 3600000 : 1000) || g.tapLevel > 50)
+    throw new Error("Invalid save.");
   for (const t of g.transactions)
     if (
       !Number.isSafeInteger(t.id) ||
@@ -252,7 +402,8 @@ export function validate(g: Game): Game {
   if (
     g.holdings !== undefined &&
     (!Array.isArray(g.holdings) ||
-      g.holdings.length !== MARKETS.length ||
+      (g.holdings.length !== MARKETS.length &&
+        !(g.version === 1 && g.holdings.length === 5)) ||
       g.holdings.some(
         (h) =>
           !h ||
@@ -267,7 +418,8 @@ export function validate(g: Game): Game {
   if (
     g.items !== undefined &&
     (!Array.isArray(g.items) ||
-      g.items.length !== ITEMS.length ||
+      (g.items.length !== ITEMS.length &&
+        !(g.version === 1 && g.items.length === 9)) ||
       g.items.some((v) => v !== 0 && v !== 1))
   )
     throw new Error("Invalid items.");
@@ -275,9 +427,13 @@ export function validate(g: Game): Game {
     throw new Error("Invalid realized gains.");
   if (g.marketSeed !== undefined && !Number.isSafeInteger(g.marketSeed))
     throw new Error("Invalid market seed.");
+  if (g.version === 2) validateEmpire(g);
   return g;
 }
 export function metrics(g: Game) {
+  return g.version === 2 ? empireMetrics(g) : legacyMetrics(g);
+}
+export function legacyMetrics(g: Game) {
   let revenue = 0,
     expenses = 0,
     assets = 0;
@@ -286,7 +442,7 @@ export function metrics(g: Game) {
     if (l) {
       revenue += b.revenue * l;
       expenses += b.expense * l * l;
-      assets += b.cost + b.cost * (l - 1);
+      assets += businessValue(i, l);
     }
   });
   let portfolio = 0,
@@ -297,7 +453,7 @@ export function metrics(g: Game) {
   MARKETS.forEach((_, i) => {
     portfolio = integer(
       portfolio +
-        (g.holdings?.[i].quantity ?? 0) *
+        (g.holdings?.[i]?.quantity ?? 0) *
           marketPrice(i, g.lastSettlement, g.marketSeed),
     );
   });
@@ -329,26 +485,64 @@ export function upgradeCost(index: number, level: number) {
   return integer(b.cost * Math.max(1, level));
 }
 export function tapValue(g: Game) {
+  if (g.version === 2 && !g.legacyTapBase)
+    return integer(Math.round(250 * Math.pow(1.64, g.tapLevel)));
   return 1000 * (g.tapLevel + 1);
 }
 export function tapUpgradeCost(g: Game) {
+  if (g.version === 2 && !g.legacyTapBase)
+    return integer(Math.round(100000 * Math.pow(1.65, g.tapLevel)));
   return 50000 * (g.tapLevel + 1);
 }
-function record(g: Game, label: string, amount: number, now: number): Game {
+export function businessValue(index: number, level: number) {
+  return level
+    ? integer(BUSINESSES[index].cost * (1 + (level * (level - 1)) / 2))
+    : 0;
+}
+export function ledger(
+  g: Game,
+  label: string,
+  amount: number,
+  now: number,
+): Game {
+  const last = g.transactions[0];
+  if (
+    last &&
+    last.label === label &&
+    (label === "Passive income" ||
+      label === "Business settlement" ||
+      label === "Entrepreneur hustle") &&
+    Math.floor(last.time / 3600000) === Math.floor(now / 3600000)
+  )
+    return {
+      ...g,
+      transactions: [
+        { ...last, amount: integer(last.amount + amount), time: now },
+        ...g.transactions.slice(1),
+      ],
+    };
   return {
     ...g,
-    cash: integer(g.cash + amount),
     sequence: g.sequence + 1,
     transactions: [
       { id: g.sequence + 1, label, amount, time: now },
       ...g.transactions,
-    ].slice(0, 60),
+    ].slice(0, 200),
   };
+}
+export function record(
+  g: Game,
+  label: string,
+  amount: number,
+  now: number,
+): Game {
+  return ledger({ ...g, cash: integer(g.cash + amount) }, label, amount, now);
 }
 export function settle(
   g: Game,
   now: number,
 ): { game: Game; amount: number; seconds: number; anomaly: boolean } {
+  if (g.version === 2) return settleEmpire(g, now);
   integer(now);
   if (now < g.lastSettlement)
     return { game: g, amount: 0, seconds: 0, anomaly: true };
@@ -372,6 +566,10 @@ export function settle(
   };
 }
 export function act(g: Game, action: Action, now: number): Game {
+  if (g.version === 2) return empireAct(g, action, now);
+  return legacyAct(g, action, now);
+}
+export function legacyAct(g: Game, action: Action, now: number): Game {
   let next = settle(g, now).game;
   if (action.type === "theme") {
     if (action.value !== "dark" && action.value !== "light")
@@ -449,7 +647,7 @@ export function act(g: Game, action: Action, now: number): Game {
     const b = BUSINESSES[action.index];
     if (!b || !next.levels[action.index])
       throw new Error("Business not owned.");
-    const value = integer(b.cost * next.levels[action.index]),
+    const value = businessValue(action.index, next.levels[action.index]),
       levels = [...next.levels];
     levels[action.index] = 0;
     return record({ ...next, levels }, `Sold ${b.name}`, value, now);
@@ -472,6 +670,8 @@ export function act(g: Game, action: Action, now: number): Game {
       now,
     );
   }
+  if (action.type !== "buy" && action.type !== "upgrade")
+    throw new Error("This action requires the updated save format.");
   const b = BUSINESSES[action.index];
   if (!b) throw new Error("Invalid business.");
   const level = next.levels[action.index];

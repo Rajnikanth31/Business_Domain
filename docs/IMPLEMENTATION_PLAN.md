@@ -1,27 +1,30 @@
-# Implementation checklist
+# Player implementation checklist
 
-- [x] Phase 1: Expo, strict TypeScript, five tabs, dark theme, Zustand, SQLite schema migration.
-- [x] Phase 2 first milestone: cash, taps, five businesses, upgrades, passive income, eight-hour offline cap, persistence and financial statistics.
-- [ ] Android device verification: close/reopen, force stop, purchase, offline summary and accessibility.
-- [x] Original geometric app icon, adaptive icon and splash artwork.
-- [ ] Phase 3: seeded stocks and crypto.
-- [ ] Phase 4: property, savings and loans.
-- [ ] Phase 5: employees, advanced industry, research and regions.
-- [ ] Phase 6: economic events, missions, achievements and levels.
-- [ ] Phase 7: charts, onboarding, haptics and deeper animation polish.
-- [ ] Phase 8: device QA, release signing and completed APK/AAB builds.
+## Implemented for 2.0
 
-Validation results are recorded in README after executing checks. The first milestone is not an assertion of production readiness.
+- [x] Original screenshot-based Earnings layout, world-style card, animated tapping and dollar currency.
+- [x] New-player clicker progression and preservation of older player balances/income.
+- [x] Independent named companies, ten slots and migration from the original ownership arrays.
+- [x] All eleven shown business categories and their working management controls.
+- [x] Staff recruitment, training, release and salary effects.
+- [x] Timed expansion, fleets, projects, resources, banking, matches, wells and aircraft.
+- [x] Clothing brand, Space agency and Holding company mergers with actual prerequisite checks.
+- [x] Shares / Real Estate / Cryptocurrency navigation and working landing pages.
+- [x] Portfolio returns, hourly dividends, exchange filters, custom orders and fractional crypto.
+- [x] Property ownership, improvements, rental income, maintenance and resale.
+- [x] Six luxury collection categories with purchases and sales.
+- [x] Editable Profile, player levels, one-time milestone rewards and offline wealth ranking.
+- [x] Saved light/dark themes, card styles, haptic preference and daily free income boost.
+- [x] Correct cumulative business valuation and useful retained transaction history.
+- [x] Atomic schema-2 migration, original snapshot backup and player recovery backup.
+- [x] Original property banner artwork bundled into the app.
+- [x] TypeScript, lint, 81 regression tests and Android bundle export.
+- [x] Free standard-runner GitHub Actions configuration for APK and installed-app smoke checks.
+- [ ] Confirm the 2.0 cloud APK build and Android emulator smoke run.
+- [ ] Physical Android handset acceptance testing and production store signing.
 
-Validation: strict TypeScript, lint, 22 Jest tests and Android Hermes bundle export passed. Expo compatibility check passed. Native device QA and APK/AAB builds remain unverified. npm audit retains 66 advisories after compatible fixes; release dependency review remains open.
+See PLAYER_RELEASE_2.md for the implemented rules, test scope and player acceptance route. Earlier audits document the historical 1.1 version and should not be interpreted as the current feature inventory.
 
+## Later scope
 
-
-## RichMan-inspired redesign and dollar currency
-
-Completed: dark charcoal/green and light/blue appearances; saved theme preference; Investing/Business/Earnings/Items/Profile navigation; virtual bank-card balance; large tap area; company catalog/detail and sale; hourly income presentation; dollar formatting preserving existing cents.
-
-Added playable feature subsets: seeded fictional stocks and crypto with fees, positions, average cost, realized/unrealized gains and price charts; five rental properties and four luxury items with maintenance and resale. Existing version-1 snapshots remain valid; new fields are optional and validated. Advanced industries, staff, loans, missions and mergers still remain future work; the complete RichMan feature set is not claimed.
-
-Validation: TypeScript, lint, 38 tests in six suites and Android bundle export passed. Android 1.1.0 / version code 2 preserves the same package and database for upgrades. Cloud APK build succeeded in run 38592733694; artifact 11908163902 contains app-release.apk. Native device QA is still pending.
-
+Online/server-authoritative features, broader catalogs/regions, player loans, missions, research and global expansion are separate work beyond these supplied screen flows. An offline game cannot fully prevent device clock manipulation or edited saves.

@@ -13,8 +13,8 @@ export const dark = {
   negative: "#F08989",
 };
 export const light = {
-  background: "#F6F7F9",
-  panel: "#FFFFFF",
+  background: "#FFFFFF",
+  panel: "#EDF2F5",
   card: "#EFF2F6",
   text: "#20242D",
   muted: "#687281",

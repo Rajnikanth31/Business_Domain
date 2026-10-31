@@ -1,4 +1,4 @@
-name: Android checks and test APK
+name: Android checks and player APK
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       build_apk:
-        description: Build a standalone ARM64 test APK
+        description: Build and smoke-test the player APK
         type: boolean
         default: true
 permissions:
@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      CI: '1'
-      EXPO_NO_TELEMETRY: '1'
+      CI: "1"
+      EXPO_NO_TELEMETRY: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,15 +34,15 @@ jobs:
       - run: npm test -- --runInBand
       - run: npx expo export --platform android
   apk:
-    name: Standalone Android test APK (ARM64)
+    name: Android APK (ARM64 and x86_64)
     needs: checks
     if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.build_apk)
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
-      CI: '1'
+      CI: "1"
       NODE_ENV: production
-      EXPO_NO_TELEMETRY: '1'
+      EXPO_NO_TELEMETRY: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -57,22 +57,54 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
       - run: npm ci --include=dev
-      - name: Generate Android project
-        run: npx expo prebuild --platform android --no-install
-      - name: Build APK with bundled JavaScript
+      - run: npx expo prebuild --platform android --no-install
+      - name: Build standalone APK
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleRelease --no-daemon --max-workers=2 -PreactNativeArchitectures=arm64-v8a -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
-      - name: Upload installable test APK
-        uses: actions/upload-artifact@v4
+          ./gradlew :app:assembleRelease --no-daemon --max-workers=2 -PreactNativeArchitectures=arm64-v8a,x86_64 -Dorg.gradle.jvmargs="-Xmx4g -XX:MaxMetaspaceSize=1g"
+      - uses: actions/upload-artifact@v4
         with:
-          name: business-empire-nextgen-arm64-${{ github.run_number }}
+          name: business-empire-nextgen-${{ github.run_number }}
           path: android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
           retention-days: 7
-      - name: Download instructions
+  native-smoke:
+    name: Android installed-app checks
+    needs: apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: business-empire-nextgen-${{ github.run_number }}
+          path: builds/apk
+      - name: Enable emulator acceleration
         run: |
-          echo '### Android test APK' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Download the APK artifact below and unzip it. It runs without Metro or Expo Go on ARM64 Android devices.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'This build uses the generated debug signing key for testing. Configure your own release key before publishing to Google Play.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Launch emulator and test the installed game
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_4
+          cores: 2
+          ram-size: 3072M
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          script: node scripts/android-smoke.cjs builds/apk/app-release.apk
+      - name: Upload native test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-player-smoke-${{ github.run_number }}
+          path: builds/native-smoke
+          retention-days: 7
+          if-no-files-found: warn

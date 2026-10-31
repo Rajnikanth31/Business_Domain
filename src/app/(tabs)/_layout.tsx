@@ -23,8 +23,8 @@ export default function Layout() {
       {[
         ["investments", "Investing", "investing"],
         ["businesses", "Business", "business"],
-        ["index", "Earnings", "earnings"],
-        ["real-estate", "Items", "items"],
+        ["index", "Earnings", "coin"],
+        ["real-estate", "Items", "grid"],
         ["empire", "Profile", "profile"],
       ].map(([name, title, icon]) => (
         <Tabs.Screen
