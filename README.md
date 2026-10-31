@@ -6,7 +6,9 @@ The five tabs provide Earnings, Investing, Business, Items and Profile. Play wit
 
 ## Download the Android APK
 
-Open the latest successful [Android Actions run](https://github.com/Rajnikanth31/Business_Domain/actions), then download the `business-empire-nextgen-<run number>` artifact and unzip it. Install `app-release.apk` on an ARM64 Android phone. Metro and Expo Go are not required. The 2.0 build is being verified; the completed run is recorded in the release notes.
+[Download the verified 2.0 Android APK](https://github.com/Rajnikanth31/Business_Domain/releases/download/v2.0.0-preview/Business-Empire-NextGen-2.0.0.apk).
+
+Alternatively, open the latest successful [Android Actions run](https://github.com/Rajnikanth31/Business_Domain/actions), then download the `business-empire-nextgen-<run number>` artifact and unzip it. Install `app-release.apk` on an ARM64 Android phone. Metro and Expo Go are not required. The 2.0 APK and installed-app checks passed in [workflow run 5](https://github.com/Rajnikanth31/Business_Domain/actions/runs/41226894591).
 
 Main-branch pushes run checks, build ARM64/x86_64 and test the installed APK on an Android emulator. The workflow uses standard Ubuntu runners, no paid EAS service, cancellation of superseded runs and seven-day artifact retention. The release-mode preview uses Expo's generated debug signing key; production store signing and physical-phone acceptance testing remain separate.
 
@@ -26,7 +28,7 @@ npm test -- --runInBand
 npx expo export --platform android
 ```
 
-The local suite has 81 passing tests covering finance, industry actions, migration, backups, queued taps and screen flows. Native emulator results are reported separately after Actions completes.
+The local suite has 81 passing tests covering finance, industry actions, migration, backups, queued taps and screen flows. Android API 35 emulator checks also passed: launch, eleven credited taps, force-stop/reopen persistence, category/opening screens, property navigation, Profile and saved dark-theme relaunch. Native screenshots were inspected and the artwork bounds corrected.
 
 ## Save data and assets
 

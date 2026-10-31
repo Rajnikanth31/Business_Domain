@@ -20,7 +20,7 @@
 - [x] Original property banner artwork bundled into the app.
 - [x] TypeScript, lint, 81 regression tests and Android bundle export.
 - [x] Free standard-runner GitHub Actions configuration for APK and installed-app smoke checks.
-- [ ] Confirm the 2.0 cloud APK build and Android emulator smoke run.
+- [x] Confirm the 2.0 cloud APK build and Android emulator smoke run: [run 5](https://github.com/Rajnikanth31/Business_Domain/actions/runs/41226894591).
 - [ ] Physical Android handset acceptance testing and production store signing.
 
 See PLAYER_RELEASE_2.md for the implemented rules, test scope and player acceptance route. Earlier audits document the historical 1.1 version and should not be interpreted as the current feature inventory.

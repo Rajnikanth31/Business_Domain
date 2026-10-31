@@ -1,6 +1,6 @@
 # Player release 2.0
 
-Implemented 28 October 2026 against the eleven supplied screenshot references. This is an original offline tycoon game with the requested screen organization and working player systems; its balance and business rules are independently implemented.
+Verified 31 October 2026 against the eleven supplied screenshot references. This is an original offline tycoon game with the requested screen organization and working player systems; its balance and business rules are independently implemented.
 
 ## Playable features
 
@@ -32,7 +32,8 @@ The Android package and database filename remain unchanged. Schema 2 migrates ea
 - TypeScript, lint and 81 Jest tests passed locally.
 - Android JavaScript/Hermes bundle export passed with both original property images included.
 - CI builds ARM64/x86_64 release-mode APKs and runs an installed-app Android smoke test: launch, starting cash, eleven credited taps, force-stop/relaunch persistence, category/opening screens, property navigation and Profile.
-- Cloud APK and native smoke results are recorded after the release workflow completes. Physical handset acceptance testing and production store signing remain separate.
+- [Cloud APK build and Android emulator checks passed](https://github.com/Rajnikanth31/Business_Domain/actions/runs/41226894591). API 35 / x86_64: launch, eleven taps, $27.50 after force-stop/reopen, company screens, property, Profile, dark-theme selection and relaunch. Corrected Earnings/property screenshots were inspected.
+- [Download the verified APK](https://github.com/Rajnikanth31/Business_Domain/releases/download/v2.0.0-preview/Business-Empire-NextGen-2.0.0.apk). SHA-256: `6e396dbe05ab5694fed43293906b79aa6c8de56e4acad77dedf3b79a2810cb25`. The package and signing certificate match the previous 1.1 APK. Migration/backup tests use a transactional mock; an in-place 1.1 native upgrade and physical handset acceptance remain unverified. Production store signing remains separate.
 - The clean dependency install reports 53 audit advisories (6 low, 42 moderate, 5 high). Runtime reachability has not been reviewed. Do not force incompatible SDK upgrades; dependency security review remains part of production release acceptance.
 
 ## Player acceptance route
@@ -47,4 +48,3 @@ The Android package and database filename remain unchanged. Schema 2 migrates ea
 8. Edit Profile, switch theme/card style, collect eligible milestones once, create a backup and inspect wealth ranking.
 
 Future additions outside the supplied screenshot flows include an online leaderboard/backend, broader country catalogs, player loans, daily/weekly missions, research and global expansion. No Play Store production signing, online financial service or advertisement SDK is included in this release.
-

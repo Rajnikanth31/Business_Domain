@@ -72,5 +72,3 @@ Features requested in the original master brief but not established as RichMan p
 ## Reproduce the probes
 
 The original 1.1 probes were replaced after fixing the defects. `node scripts/game-audit.cjs` now runs the current economy regression checks; consult the historical 1.1 commit to reproduce the old observations.
-
-
