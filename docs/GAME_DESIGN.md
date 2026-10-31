@@ -1,12 +1,11 @@
-# Business Empire: NextGen
+# Business Empire: NextGen — player rules
 
-Original offline idle tycoon. Fictional currency uses integer hundredths ($1 = 100). Start with $1,000; each tap earns $10; the first tap upgrade costs $500. Buy five progressively more expensive beginner businesses. Level increases revenue linearly and expenses quadratically, so overexpansion can lose money. Bankrupt operations stop consuming cash at zero; tapping provides a recovery route.
+The 2.0 game uses simulated dollars and an offline-first economy. New players start at $0, earn $2.50 per tap and can buy the first $1,000 clicker upgrade for $4.10 per tap. Existing players retain their original click income and asset prices after migration.
 
-Business valuation is original purchase cost plus capital spent on upgrades. Net worth = cash + business valuation; unimplemented asset classes and liabilities are zero. Markets remain stable in this milestone. No invented levels or portfolio performance.
+Buy and name up to ten companies across eleven categories. Expand companies through timed stages, manage employees and industry resources, and meet concrete company/fleet/cash prerequisites for three mergers. Company value tracks paid capital, vault funding, inventory and work in progress. Unfinished projects or expansions block selling and merging.
 
-Settle using elapsed milliseconds, integer arithmetic and carried fractional cents. Limit each absent interval to eight hours. Advance the settlement timestamp even when capped. Backwards time retains the previous timestamp and earns nothing until the clock catches up. Offline manipulation cannot be fully prevented. UI waits for each atomic save and rejects concurrent actions.
+Shares earn game-hour dividends. Crypto supports six decimal places. Simulated prices update in deterministic five-minute buckets; they are not a live market. Orders include a 1% fee. Properties earn rent, incur maintenance and support paid improvements. Luxury collections incur upkeep. Asset sale returns 90% of its displayed property/collection value; company sale returns its recorded value.
 
-Later phases: seeded investments; properties and loans; staff and research; economy and progression; visual polish; release readiness. Later systems are clearly labeled roadmap views rather than fake controls.
+Wallet calculations use integer cents and carried fractional income. Settlement splits at timed events, advances the saved timestamp and caps absent earnings at eight hours. Bankruptcy cannot take cash below zero; tapping provides a recovery route. Backwards time pauses earnings until the prior timestamp is reached. Offline saves cannot fully prevent deliberate clock or data modification.
 
-The revised interface uses simulated US dollar amounts with a selectable light or dark theme. Internal values remain integer cents. Hourly income in the UI equals per-second simulation income multiplied by 3,600. Stock and crypto prices are deterministic hash functions of a saved seed and five-minute time buckets; this bounded-price first implementation is not a realistic stochastic exchange model. Trades have a 1% fee and persist total cost basis. Properties earn fixed rent; luxury assets incur maintenance. Item resale returns 90% of purchase value; company resale returns all invested capital. These simplified mechanics have explicit tests and can expand independently.
-
+Both themes, card styles, profile edits, levels and collectible milestones are persistent. Wealth rankings compare actual player net worth against fictional offline rivals. Recovery backups remain on the device. See [full release rules](PLAYER_RELEASE_2.md) and [implementation status](IMPLEMENTATION_PLAN.md) for test scope and remaining release work.

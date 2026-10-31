@@ -56,3 +56,5 @@ Reviewed 28 October 2026. Eleven JPEG screenshots are in `E:/Projests/Business_D
 6. Verify the updated APK on Android and compare every supplied screen against the actual running game.
 
 No application files or APK were changed during this screenshot review. Missing detail: business-specific management screens, stock order/detail screens, property detail/improvement screens, Items catalog, main Profile screen and dark-theme counterparts are not supplied here. Their exact layouts cannot be inferred from these screenshots.
+
+Player-facing implementation status: see [PLAYER_RELEASE_2.md](PLAYER_RELEASE_2.md). The original screenshots are excluded from the application bundle.

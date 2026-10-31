@@ -34,22 +34,23 @@ export function Gradient({
 }) {
   const id = useId().replace(/:/g, "");
   return (
-    <Svg
-      pointerEvents="none"
-      style={StyleSheet.absoluteFill}
-      width="100%"
-      height="100%"
-      preserveAspectRatio="none"
-      viewBox="0 0 100 100"
-    >
-      <Defs>
-        <LinearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <Stop offset="0" stopColor={colors[0]} />
-          <Stop offset="1" stopColor={colors[1]} />
-        </LinearGradient>
-      </Defs>
-      <Rect width={100} height={100} rx={radius} fill={`url(#${id})`} />
-    </Svg>
+    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+      <Svg
+        pointerEvents="none"
+        width="100%"
+        height="100%"
+        preserveAspectRatio="none"
+        viewBox="0 0 100 100"
+      >
+        <Defs>
+          <LinearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0" stopColor={colors[0]} />
+            <Stop offset="1" stopColor={colors[1]} />
+          </LinearGradient>
+        </Defs>
+        <Rect width={100} height={100} rx={radius} fill={`url(#${id})`} />
+      </Svg>
+    </View>
   );
 }
 export function Page({
@@ -549,15 +550,17 @@ export function Banner({
       }}
     >
       {kind === "city" || kind === "house" ? (
-        <Image
-          source={
-            kind === "city"
-              ? require("../../assets/images/property-city.png")
-              : require("../../assets/images/property-house.png")
-          }
-          resizeMode="cover"
-          style={StyleSheet.absoluteFill}
-        />
+        <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+          <Image
+            source={
+              kind === "city"
+                ? require("../../assets/images/property-city.png")
+                : require("../../assets/images/property-house.png")
+            }
+            resizeMode="cover"
+            style={{ width: "100%", height: "100%" }}
+          />
+        </View>
       ) : (
         <Illustration kind={kind} />
       )}
@@ -580,90 +583,91 @@ export function Illustration({
 }) {
   const sceneId = useId().replace(/:/g, "");
   return (
-    <Svg
-      pointerEvents="none"
-      width="100%"
-      height="100%"
-      style={StyleSheet.absoluteFill}
-      viewBox="0 0 360 180"
-      preserveAspectRatio="xMidYMid slice"
-    >
-      <Defs>
-        <LinearGradient id={sceneId} x1="0" y1="0" x2="1" y2="1">
-          <Stop stopColor={kind === "house" ? "#62B3DD" : "#258AB6"} />
-          <Stop
-            offset="1"
-            stopColor={kind === "money" ? "#202D64" : "#142B4B"}
-          />
-        </LinearGradient>
-      </Defs>
-      <Rect width={360} height={180} fill={`url(#${sceneId})`} />
-      <Circle cx={290} cy={38} r={24} fill="#F8DBA2" />
-      {kind === "house" ? (
-        <>
-          <Path d="M60 101L172 26L290 101Z" fill="#E8BE8C" />
-          <Rect x={81} y={98} width={187} height={90} fill="#EBE8D9" />
-          <Rect x={154} y={111} width={45} height={69} fill="#577994" />
-          <Rect x={103} y={115} width={30} height={28} fill="#87BCD7" />
-          <Rect x={219} y={115} width={30} height={28} fill="#87BCD7" />
-          <Path d="M0 165Q90 135 180 170T360 145V180H0Z" fill="#457B65" />
-        </>
-      ) : kind === "money" ? (
-        <>
-          <Path d="M80 70L195 34L292 86L182 126Z" fill="#41CCAA" />
-          <Path d="M80 70V116L182 169V126Z" fill="#189C8A" />
-          <Path d="M182 126L292 86V129L182 169Z" fill="#2476A1" />
-          <Path
-            d="M140 52L184 38L246 102L211 115L211 155L182 168L182 126Z"
-            fill="#EEC477"
-          />
-          <Path
-            d="M98 85L166 119M98 98L166 132"
-            stroke="#75E1BA"
-            strokeWidth={3}
-          />
-        </>
-      ) : kind === "market" ? (
-        <>
-          <Path
-            d="M30 145L82 112L116 130L180 77L215 96L310 35"
-            fill="none"
-            stroke="#75DCE5"
-            strokeWidth={8}
-          />
-          <Rect x={50} y={120} width={25} height={60} fill="#2B70A7" />
-          <Rect x={120} y={105} width={25} height={75} fill="#4CA7C9" />
-          <Rect x={190} y={72} width={25} height={108} fill="#54C2C6" />
-          <Rect x={260} y={32} width={25} height={148} fill="#7DD4BA" />
-        </>
-      ) : (
-        <>
-          {[25, 80, 140, 208, 278].map((x, i) => (
-            <Rect
-              key={x}
-              x={x}
-              y={30 + (i % 3) * 25}
-              width={45 + (i % 2) * 15}
-              height={160}
-              rx={3}
-              fill={["#7897AD", "#527B9D", "#87A6B7"][i % 3]}
+    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+      <Svg
+        pointerEvents="none"
+        width="100%"
+        height="100%"
+        viewBox="0 0 360 180"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <Defs>
+          <LinearGradient id={sceneId} x1="0" y1="0" x2="1" y2="1">
+            <Stop stopColor={kind === "house" ? "#62B3DD" : "#258AB6"} />
+            <Stop
+              offset="1"
+              stopColor={kind === "money" ? "#202D64" : "#142B4B"}
             />
-          ))}
-          {[40, 95, 155, 225, 295].map((x) =>
-            [65, 90, 115].map((y) => (
+          </LinearGradient>
+        </Defs>
+        <Rect width={360} height={180} fill={`url(#${sceneId})`} />
+        <Circle cx={290} cy={38} r={24} fill="#F8DBA2" />
+        {kind === "house" ? (
+          <>
+            <Path d="M60 101L172 26L290 101Z" fill="#E8BE8C" />
+            <Rect x={81} y={98} width={187} height={90} fill="#EBE8D9" />
+            <Rect x={154} y={111} width={45} height={69} fill="#577994" />
+            <Rect x={103} y={115} width={30} height={28} fill="#87BCD7" />
+            <Rect x={219} y={115} width={30} height={28} fill="#87BCD7" />
+            <Path d="M0 165Q90 135 180 170T360 145V180H0Z" fill="#457B65" />
+          </>
+        ) : kind === "money" ? (
+          <>
+            <Path d="M80 70L195 34L292 86L182 126Z" fill="#41CCAA" />
+            <Path d="M80 70V116L182 169V126Z" fill="#189C8A" />
+            <Path d="M182 126L292 86V129L182 169Z" fill="#2476A1" />
+            <Path
+              d="M140 52L184 38L246 102L211 115L211 155L182 168L182 126Z"
+              fill="#EEC477"
+            />
+            <Path
+              d="M98 85L166 119M98 98L166 132"
+              stroke="#75E1BA"
+              strokeWidth={3}
+            />
+          </>
+        ) : kind === "market" ? (
+          <>
+            <Path
+              d="M30 145L82 112L116 130L180 77L215 96L310 35"
+              fill="none"
+              stroke="#75DCE5"
+              strokeWidth={8}
+            />
+            <Rect x={50} y={120} width={25} height={60} fill="#2B70A7" />
+            <Rect x={120} y={105} width={25} height={75} fill="#4CA7C9" />
+            <Rect x={190} y={72} width={25} height={108} fill="#54C2C6" />
+            <Rect x={260} y={32} width={25} height={148} fill="#7DD4BA" />
+          </>
+        ) : (
+          <>
+            {[25, 80, 140, 208, 278].map((x, i) => (
               <Rect
-                key={`${x}-${y}`}
+                key={x}
                 x={x}
-                y={y}
-                width={9}
-                height={12}
-                fill="#C8DFE5"
+                y={30 + (i % 3) * 25}
+                width={45 + (i % 2) * 15}
+                height={160}
+                rx={3}
+                fill={["#7897AD", "#527B9D", "#87A6B7"][i % 3]}
               />
-            )),
-          )}
-        </>
-      )}
-    </Svg>
+            ))}
+            {[40, 95, 155, 225, 295].map((x) =>
+              [65, 90, 115].map((y) => (
+                <Rect
+                  key={`${x}-${y}`}
+                  x={x}
+                  y={y}
+                  width={9}
+                  height={12}
+                  fill="#C8DFE5"
+                />
+              )),
+            )}
+          </>
+        )}
+      </Svg>
+    </View>
   );
 }
 export function duration(ms: number) {
@@ -683,4 +687,3 @@ export function compact(cents: number) {
         : money(cents);
 }
 export type { Palette };
-

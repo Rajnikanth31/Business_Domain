@@ -1,3 +1,5 @@
+> Historical 1.1 audit. The valuation, ledger, company, investing and profile changes implemented for 2.0 are documented in [PLAYER_RELEASE_2.md](PLAYER_RELEASE_2.md). Test results below describe 1.1 only.
+
 # RichMan comparison and current-game audit
 
 Audited 14 October 2026. Current application: Business Empire: NextGen 1.1.0. Scope: automated engine/store/component checks, source inspection, deterministic economy probes, and comparison with published RichMan documentation. This is not a native Android playthrough or an assertion of feature parity.
@@ -69,4 +71,6 @@ Features requested in the original master brief but not established as RichMan p
 
 ## Reproduce the probes
 
-Run the supplied audit script with Node 25 (the installed development runtime): `node scripts/game-audit.cjs`. Passing assertions mean the documented observations reproduce. This script is intentionally separate from regression tests and does not endorse the observed defects.
+The original 1.1 probes were replaced after fixing the defects. `node scripts/game-audit.cjs` now runs the current economy regression checks; consult the historical 1.1 commit to reproduce the old observations.
+
+

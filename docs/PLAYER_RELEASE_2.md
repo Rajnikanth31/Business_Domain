@@ -33,6 +33,7 @@ The Android package and database filename remain unchanged. Schema 2 migrates ea
 - Android JavaScript/Hermes bundle export passed with both original property images included.
 - CI builds ARM64/x86_64 release-mode APKs and runs an installed-app Android smoke test: launch, starting cash, eleven credited taps, force-stop/relaunch persistence, category/opening screens, property navigation and Profile.
 - Cloud APK and native smoke results are recorded after the release workflow completes. Physical handset acceptance testing and production store signing remain separate.
+- The clean dependency install reports 53 audit advisories (6 low, 42 moderate, 5 high). Runtime reachability has not been reviewed. Do not force incompatible SDK upgrades; dependency security review remains part of production release acceptance.
 
 ## Player acceptance route
 
@@ -46,3 +47,4 @@ The Android package and database filename remain unchanged. Schema 2 migrates ea
 8. Edit Profile, switch theme/card style, collect eligible milestones once, create a backup and inspect wealth ranking.
 
 Future additions outside the supplied screenshot flows include an online leaderboard/backend, broader country catalogs, player loans, daily/weekly missions, research and global expansion. No Play Store production signing, online financial service or advertisement SDK is included in this release.
+

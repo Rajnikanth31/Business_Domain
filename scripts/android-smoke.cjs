@@ -6,7 +6,11 @@ const packageName = "com.nextgen.businessempire";
 const output = "builds/native-smoke";
 fs.mkdirSync(output, { recursive: true });
 const adb = (...args) =>
-  execFileSync("adb", args, { encoding: "utf8", timeout: 30000 });
+  execFileSync("adb", args, {
+    encoding: "utf8",
+    timeout: 30000,
+    maxBuffer: 16 * 1024 * 1024,
+  });
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 function nodes(xml) {
   return [...xml.matchAll(/<node\s+([^>]+)>/g)].map((match) => {
@@ -129,6 +133,23 @@ async function main() {
   );
   await waitNode(hasText("Entrepreneur"), "player profile");
   screenshot("06-profile");
+  let dark;
+  for (let i = 0; i < 7; i++) {
+    dark = nodes(dump()).find(hasText("Dark"));
+    if (dark) break;
+    adb("shell", "input", "swipe", "540", "1750", "540", "650", "400");
+    await sleep(300);
+  }
+  assert(dark, "Dark theme control is reachable");
+  tap(dark);
+  await sleep(500);
+  await click("Earnings");
+  await waitNode(hasText("Tap to earn $2.50"), "dark earnings screen");
+  screenshot("07-dark-earnings");
+  adb("shell", "am", "force-stop", packageName);
+  launch();
+  await waitNode(hasText("$27.50"), "balance after theme restart");
+  screenshot("08-dark-after-restart");
   const logs = adb("logcat", "-d");
   fs.writeFileSync(path.join(output, "logcat.txt"), logs);
   assert(
@@ -148,6 +169,7 @@ async function main() {
           "company category and opening screen",
           "property investing navigation",
           "player profile",
+          "dark theme selection and relaunch",
         ],
         balance: "$27.50",
       },
